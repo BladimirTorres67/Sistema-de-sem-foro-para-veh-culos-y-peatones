@@ -1,0 +1,52 @@
+// C++ code
+// Semáforo para coches y peatones con pulsador
+int tiempoCruce = 5000;
+unsigned long tiempoCambio = 0;
+
+void setup(){
+  // semaforo coches
+  pinMode(10, OUTPUT);  // rojo
+  pinMode(9, OUTPUT);   // amarillo
+  pinMode(8, OUTPUT);   // verde
+  // semaforo peatones
+  pinMode(3, OUTPUT);   // rojo
+  pinMode(2, OUTPUT);   // verde
+  pinMode(6, INPUT);    // pulsador, cambio de color
+  digitalWrite(8, HIGH);  // iniciamos con el verde encendido, coche
+  digitalWrite(3, HIGH);  // iniciamos con el rojo encendido, peatón
+}
+
+void loop() {
+  int estado = digitalRead(6);
+  if (estado == LOW && (millis() - tiempoCambio) > 5000 ){
+    cambioLuz();
+  }
+}
+
+void cambioLuz() {
+  digitalWrite(8, LOW);   // verde apagado, coche
+  digitalWrite(9, HIGH);  // amarillo encendido, coche
+  delay(2000);
+
+  digitalWrite(9, LOW);   // amarillo apagado, coche
+  digitalWrite(10, HIGH); // rojo encendido, coche
+  delay(1000);
+
+  digitalWrite(3, LOW);   // rojo apagado, peatón
+  digitalWrite(2, HIGH);  // verde encendido, peatón
+  delay(tiempoCruce);
+  // parpadeo de la luz verde del peatón
+  for (int x=0; x < 10; x++) {
+    digitalWrite(2, HIGH);
+    delay(250);
+    digitalWrite(2, LOW);
+    delay(250);
+  }
+
+  digitalWrite(3, HIGH);  // rojo encendido, peatón
+  delay(500);
+
+  digitalWrite(10, LOW);  // rojo apagado, coche
+  digitalWrite(8, HIGH);  // verde encendido, coche
+  tiempoCambio = millis();
+}
